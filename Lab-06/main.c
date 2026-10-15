@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+
+    int co,po;
+    struct node *addr;
+};
+typedef struct node *NODE;
+NODE insertend(NODE start, int co, int po)
+{
+    NODE temp, cur;
+    temp = (NODE)malloc(sizeof(struct node));
+    temp->co = co;
+    temp->po=po;
+    temp->addr=NULL;
+    if(start == NULL)
+        return temp;
+    cur = start;
+    while(cur->addr!=NULL)
+        cur=cur->addr;
+    cur->addr=temp;
+    return start;
+}
+void display(NODE start)
+{
+    NODE temp;
+    if(start==NULL)
+        printf("\n Polynomial is empty");
+    else
+    {
+        temp=start;
+        while(temp->addr!=NULL)
+        {
+            printf("%d*x^%d+",temp->co,temp->po);
+            temp=temp->addr;
+
+        }
+        printf("%d*x^%d",temp->co,temp->po);
+    }
+}
+NODE addterm(NODE result, int co, int po)
+{
+    NODE temp,cur;
+    temp = (NODE)malloc(sizeof(struct node));
+    temp->co=co;
+    temp->po=po;
+    temp->addr=NULL;
+    if(result==NULL)
+        return temp;
+    cur = result;
+    while(cur!=NULL)
+    {
+        if(cur->po==po)
+        {
+            cur->co=cur->co+co;
+            return result;
+        }
+        cur = cur->addr;
+    }
+        if(cur==NULL)
+            result = insertend(result,co,po);
+        return result;
+
+}
+NODE multiply(NODE poly1, NODE poly2)
+{
+    NODE p1, p2, result=NULL;
+    for(p1=poly1;p1!=NULL;p1=p1->addr)
+        for(p2=poly2;p2!=NULL;p2=p2->addr)
+        result = addterm(result, p1->co*p2->co,p1->po+p2->po);
+    return result;
+}
+int main()
+{
+    NODE poly1 = NULL, poly2=NULL, poly;
+    int n, i, co,po;
+    printf("\n read number of terms for first polynomial:");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++)
+    {
+        printf("\n Read coefficient and power for %d term ",i);
+        scanf("%d %d",&co,&po);
+        poly1=insertend(poly1, co,po);
+    }
+    printf("\nFirst polynomial is\n");
+    display(poly1);
+    printf("\n read number of terms for second polynomial:");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++)
+    {
+        printf("\n Read coefficient and power for %d term ",i);
+        scanf("%d %d",&co,&po);
+        poly2=insertend(poly2, co,po);
+    }
+    printf("\n Second polynomial is \n");
+    display(poly2);
+    poly = multiply(poly1, poly2);
+    printf("\nThe resultant polynomial is\n");
+    display(poly);
+    return 0;
+}
+
+
+
+
+
+
+
